@@ -1,50 +1,118 @@
+const hbs = require("hbs")
 const path = require("path");
 const express = require("express");
 
+
+const geocode = require("./utils/geocode")
+const forecast = require("./utils/forecast")
+
+
 // define paths for express config
 const publicDirectoryPath = path.join(__dirname, "../public");
-const viewPath = path.join(__dirname,"../templates");
+const partialsPath = path.join(__dirname, "../templates/partials")
+const viewPath = path.join(__dirname,"../templates/views");
 
 const app = express();
 
 app.set("view engine","hbs");
 app.set("views", viewPath);
 app.use(express.static(publicDirectoryPath));
+hbs.registerPartials(partialsPath)
 
 app.get("/", (req, res) => {
 	res.render("index", {
 		title: "Weather",
-		name: "Andrew mead"
+		name: "psych"
 	});
 });
 
-app.get("/About", (req,res)=> {
+app.get("/About", (req,res) => {
 
 	res.render("About", {
 		title: "About",
-		name: "Psych"
-	})
-})
+		name: "psych"
+	});
+});
 
 app.get("/Help", (req,res) => {
 
 	res.render("Help", {
 		title: "Help",
-		helpText: "Ooops... something went wrong :("
-	})
-})
+		name: "psych",
+		helpText: "Psych, how may I assist you ;)"
+	});
+});
+
 app.get("/weather", (req,res) => {
-	res.send({
-		current: {
-			location: "Alberton",
-			temperature: 20,
-			forecast: "Raining inside"
+
+	if (!req.query.address) {
+		return res.send({
+			error:"Please enter address"
+		})
+	}
+
+	geocode(req.query.address, (error, {location, latitude, longitude } = {} ) => {
+
+		if (error) {
+
+			return res.send({error})
 		}
-	})
-})
+
+		forecast(longitude, latitude, (error, data) => {
+
+			if (error) {
+
+				return res.send({error})
+			}
+
+			res.send({
+				address: req.query.address,
+				forecast: data,
+				location,
+					// forecast: "Raining inside"
+			});
+		})
+
+	});
+	
+});
+
+/*// Example //*/
+
+// app.get("/products", (req, res) => {
+
+// 	console.log(req.query)
+
+// 	if (!req.query.search) {
+// 		return res.send( {
+// 			error: "You must provide a search term"
+// 		})
+// 	}	
+// 	res.send({
+// 		product: "weather"
+// 	})
+// })
+
+app.get("/help/*", (req, res) => {
+	res.render("404", {
+		title: "404 :(",
+		name: "psych",
+		errorMessage: "Help article not found",
+		error: "missing article"
+	});
+});
+
+app.get("*", (req, res) => {
+	res.render("404", {
+		title: "404 :(",
+		name: "psych",
+		errorMessage: "Ooops... something went wrong",
+		error: "oops"
+	});
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {
 	// everything here shows up in the terminal
 	console.log(`Server up and running on port:[${PORT}]`);
-})
+});
