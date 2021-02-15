@@ -1,11 +1,11 @@
+// modules that need requiring
 const hbs = require("hbs")
 const path = require("path");
 const express = require("express");
 
-
+// utilities files that I wrote that needs requiring
 const geocode = require("./utils/geocode")
 const forecast = require("./utils/forecast")
-
 
 // define paths for express config
 const publicDirectoryPath = path.join(__dirname, "../public");
@@ -13,6 +13,7 @@ const partialsPath = path.join(__dirname, "../templates/partials")
 const viewPath = path.join(__dirname,"../templates/views");
 
 const app = express();
+const port = process.env.PORT || 3000  
 
 app.set("view engine","hbs");
 app.set("views", viewPath);
@@ -77,22 +78,6 @@ app.get("/weather", (req,res) => {
 	
 });
 
-/*// Example //*/
-
-// app.get("/products", (req, res) => {
-
-// 	console.log(req.query)
-
-// 	if (!req.query.search) {
-// 		return res.send( {
-// 			error: "You must provide a search term"
-// 		})
-// 	}	
-// 	res.send({
-// 		product: "weather"
-// 	})
-// })
-
 app.get("/help/*", (req, res) => {
 	res.render("404", {
 		title: "404 :(",
@@ -111,8 +96,6 @@ app.get("*", (req, res) => {
 	});
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-	// everything here shows up in the terminal
-	console.log(`Server up and running on port:[${PORT}]`);
+app.listen(port, () => {
+	console.log(`Server up and running on port:[${port}]`);
 });
