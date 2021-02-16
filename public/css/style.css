@@ -62,3 +62,18 @@ button {
 	border: none;
 	border: 1px solid #888888;
 }
+
+.weather-icon {
+	border-radius: 40px;
+	width: 40px;
+	margin: 0.5rem;
+}
+
+.row-container {
+	display: flex;
+}
+
+.vertical-center {
+	display: flex;
+	align-items: center;
+}
