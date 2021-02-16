@@ -6,9 +6,7 @@ const messageTwo = document.querySelector("#message-two")
 weatherform.addEventListener("submit", (e) => {
 	e.preventDefault();
 
-	console.log(messageOne)
-
-	messageOne.className="success"
+	messageOne.className=""
 	messageOne.textContent = "Loading..."
 	messageTwo.textContent= ""
 
@@ -19,16 +17,15 @@ weatherform.addEventListener("submit", (e) => {
 
 			if (data.error) {
 				messageOne.className="error"
-				messageOne.innerText = data.error
-				return console.log(data.error)
+				return messageOne.innerText = data.error
 			} 
 
-			console.log(data.location)
-			console.log(data.forecast)
 			messageOne.className=""
 			messageOne.textContent = data.location
 			messageTwo.textContent = data.forecast
 
 		})
+	}).catch(err => {
+		console.log(err)
 	})
 })
